@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import * as colors from '@radix-ui/colors';
 import { RiExchangeFill } from 'react-icons/ri';
+import Select from 'react-select';
 
 import { useCurrency } from '../modules/currency/hooks/useCurrency';
 
@@ -9,35 +10,95 @@ const Container = styled.div({
   display: 'flex',
   minHeight: '100vh',
   alignItems: 'center',
+  // justifyContent: 'center',
+  flexDirection: 'column',
+});
+
+const InputContainer = styled.div({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
   justifyContent: 'center',
 });
 
-const ConvertButton = styled.button({
-  all: 'unset',
-  width: 36,
-  height: 36,
-  cursor: 'pointer',
-  color: colors.violet.violet9,
-  marginLeft: 8,
+const Wrapper = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 
-  '&:hover': {
-    color: colors.violet.violet10,
+  '@media (max-width: 768px)': {
+    flexDirection: 'column',
   },
 });
 
-const InputValue = styled.input`
--moz-appearance: textfield;
-::-webkit-outer-spin-button,
-::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-min-width: 40px;
-margin-right: 8px;
-outline: 0;
-border: 1px solid black;
-border-radius: 4px;
-padding-left: 10px;
-`;
+const Input = styled.input({
+  '-moz-appearance': 'textfield',
+  '::-webkit-outer-spin-button, ::-webkit-inner-spin-button': {
+    '-webkit-appearance': 'none',
+  },
+  minWidth: 40,
+  outline: 0,
+  border: 'none',
+  borderTop: '1px solid black',
+  borderBottom: '1px solid black',
+  borderLeft: '1px solid black',
+  borderRadius: '4px 0 0 4px',
+  padding: '6px 96px 6px 6px',
+});
+
+const SVGContainer = styled.div({
+  display: 'flex',
+  marginLeft: 8,
+  marginRight: 8,
+});
+
+const Header = styled.h1({
+  marginBottom: 128,
+  marginTop: 128,
+
+  '@media (max-width: 768px)': {
+    marginBottom: 64,
+    marginTop: 64,
+  },
+});
+
+const selectStyles = {
+  menu: (provided, state) => ({
+    ...provided,
+    width: state.selectProps.width,
+    color: state.selectProps.menuColor,
+  }),
+
+  container: (provided, state) => ({
+    ...provided,
+    border: 0,
+  }),
+  indicatorsContainer: (provided, state) => ({
+    ...provided,
+    border: 'none',
+  }),
+
+  singleValue: (provided, state) => {
+    const opacity = state.isDisabled ? 0.5 : 1;
+    const transition = 'opacity 300ms';
+
+    return { ...provided, opacity, transition };
+  },
+
+  control: (provided, state) => ({
+    ...provided,
+    border: 'none',
+    borderTop: '1px solid black',
+    borderBottom: '1px solid black',
+    borderRight: '1px solid black',
+    borderRadius: '0 4px 4px 0',
+    boxShadow: 'none',
+    ':hover': {
+      color: 'black',
+      borderColor: 'black',
+    },
+  }),
+};
 
 export const App = (): JSX.Element => {
   const [fromValue, setFromValue] = React.useState<number>(0);
@@ -63,25 +124,30 @@ export const App = (): JSX.Element => {
     setFromValue(Number((newToValue / currencyRate).toFixed(2)));
   };
 
+  const getOptions = () => {
+    return Object.keys(currenciesList).map((key) => {
+      return { value: key, label: key.toUpperCase() };
+    });
+  };
+
   return (
     <Container>
-      <InputValue value={fromValue === 0 ? '' : fromValue} type="number" onChange={changeFromValue} />
-      <select onChange={(event) => setFromCurrency(event.currentTarget.value)} value={fromCurrency}>
-        <option disabled value="" hidden label=" ">select currency</option>
-        {Object.entries(currenciesList).map((data) => (
-          <option key={data[0]}>{data[0]}</option>
-        ))}
-      </select>
+      <Header>Currency converter</Header>
+      <Wrapper>
+        <InputContainer>
+          <Input value={fromValue === 0 ? '' : fromValue} type="number" onChange={changeFromValue} />
+          <Select options={getOptions()} onChange={(event) => setFromCurrency(event?.value ?? '')} styles={selectStyles} />
+        </InputContainer>
 
-      <RiExchangeFill size={36} color={colors.violet.violet9} />
+        <SVGContainer>
+          <RiExchangeFill size={36} color={colors.violet.violet9} />
+        </SVGContainer>
 
-      <InputValue type="number" onChange={changeToValue} value={toValue === 0 ? '' : toValue} />
-      <select onChange={(event) => setToCurrency(event.currentTarget.value)} value={toCurrency}>
-        <option disabled value="" hidden label=" ">select currency</option>
-        {Object.entries(currenciesList).map((data) => (
-          <option key={data[0]}>{data[0]}</option>
-        ))}
-      </select>
+        <InputContainer>
+          <Input type="number" onChange={changeToValue} value={toValue === 0 ? '' : toValue} />
+          <Select options={getOptions()} onChange={(event) => setToCurrency(event?.value ?? '')} styles={selectStyles} />
+        </InputContainer>
+      </Wrapper>
     </Container>
   );
 };
