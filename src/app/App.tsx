@@ -63,29 +63,35 @@ const Header = styled.h1({
 });
 
 const selectStyles = {
-  menu: (provided, state) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  menu: (provided) => ({
     ...provided,
-    width: state.selectProps.width,
-    color: state.selectProps.menuColor,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   }),
 
-  container: (provided, state) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  container: (provided) => ({
     ...provided,
     border: 0,
   }),
-  indicatorsContainer: (provided, state) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  indicatorsContainer: (provided) => ({
     ...provided,
     border: 'none',
   }),
 
-  singleValue: (provided, state) => {
-    const opacity = state.isDisabled ? 0.5 : 1;
+  singleValue: (provided) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const transition = 'opacity 300ms';
 
-    return { ...provided, opacity, transition };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return { ...provided, transition };
   },
 
-  control: (provided, state) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  control: (provided) => ({
     ...provided,
     border: 'none',
     borderTop: '1px solid black',
