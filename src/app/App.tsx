@@ -2,23 +2,16 @@ import * as React from 'react';
 import styled from 'styled-components';
 import * as colors from '@radix-ui/colors';
 import { RiExchangeFill } from 'react-icons/ri';
-import Select from 'react-select';
 
+import { CurrencyInput } from '../common/components/CurrencyInput';
 import { useCurrency } from '../modules/currency/hooks/useCurrency';
+import { Currencies } from '../modules/currency/api';
 
 const Container = styled.div({
   display: 'flex',
   minHeight: '100vh',
   alignItems: 'center',
-  // justifyContent: 'center',
   flexDirection: 'column',
-});
-
-const InputContainer = styled.div({
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
 });
 
 const Wrapper = styled.div({
@@ -31,25 +24,15 @@ const Wrapper = styled.div({
   },
 });
 
-const Input = styled.input({
-  '-moz-appearance': 'textfield',
-  '::-webkit-outer-spin-button, ::-webkit-inner-spin-button': {
-    '-webkit-appearance': 'none',
-  },
-  minWidth: 40,
-  outline: 0,
-  border: 'none',
-  borderTop: '1px solid black',
-  borderBottom: '1px solid black',
-  borderLeft: '1px solid black',
-  borderRadius: '4px 0 0 4px',
-  padding: '6px 96px 6px 6px',
-});
-
 const SVGContainer = styled.div({
   display: 'flex',
   marginLeft: 8,
   marginRight: 8,
+
+  '@media (max-width: 768px)': {
+    marginBottom: 8,
+    marginTop: 8,
+  },
 });
 
 const Header = styled.h1({
@@ -62,48 +45,10 @@ const Header = styled.h1({
   },
 });
 
-const selectStyles = {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  menu: (provided) => ({
-    ...provided,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  }),
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  container: (provided) => ({
-    ...provided,
-    border: 0,
-  }),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  indicatorsContainer: (provided) => ({
-    ...provided,
-    border: 'none',
-  }),
-
-  singleValue: (provided) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const transition = 'opacity 300ms';
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return { ...provided, transition };
-  },
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  control: (provided) => ({
-    ...provided,
-    border: 'none',
-    borderTop: '1px solid black',
-    borderBottom: '1px solid black',
-    borderRight: '1px solid black',
-    borderRadius: '0 4px 4px 0',
-    boxShadow: 'none',
-    ':hover': {
-      color: 'black',
-      borderColor: 'black',
-    },
-  }),
+const getOptions = (data: Currencies) => {
+  return Object.keys(data).map((key) => {
+    return { value: key, label: key.toUpperCase() };
+  });
 };
 
 export const App = (): JSX.Element => {
@@ -130,29 +75,30 @@ export const App = (): JSX.Element => {
     setFromValue(Number((newToValue / currencyRate).toFixed(2)));
   };
 
-  const getOptions = () => {
-    return Object.keys(currenciesList).map((key) => {
-      return { value: key, label: key.toUpperCase() };
-    });
-  };
+  const options = getOptions(currenciesList);
 
   return (
     <Container>
       <Header>Currency converter</Header>
+
       <Wrapper>
-        <InputContainer>
-          <Input value={fromValue === 0 ? '' : fromValue} type="number" onChange={changeFromValue} />
-          <Select options={getOptions()} onChange={(event) => setFromCurrency(event?.value ?? '')} styles={selectStyles} />
-        </InputContainer>
+        <CurrencyInput
+          value={fromValue === 0 ? '' : fromValue}
+          options={options}
+          onInputChange={changeFromValue}
+          onCurrencyChange={(event) => setFromCurrency(event?.value ?? '')}
+        />
 
         <SVGContainer>
           <RiExchangeFill size={36} color={colors.violet.violet9} />
         </SVGContainer>
 
-        <InputContainer>
-          <Input type="number" onChange={changeToValue} value={toValue === 0 ? '' : toValue} />
-          <Select options={getOptions()} onChange={(event) => setToCurrency(event?.value ?? '')} styles={selectStyles} />
-        </InputContainer>
+        <CurrencyInput
+          value={toValue === 0 ? '' : toValue}
+          options={options}
+          onInputChange={changeToValue}
+          onCurrencyChange={(event) => setToCurrency(event?.value ?? '')}
+        />
       </Wrapper>
     </Container>
   );
