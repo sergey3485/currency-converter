@@ -35,7 +35,7 @@ const SVGContainer = styled.div({
   },
 });
 
-const Header = styled.h1({
+const Heading = styled.h1({
   marginBottom: 128,
   marginTop: 128,
 
@@ -43,6 +43,16 @@ const Header = styled.h1({
     marginBottom: 64,
     marginTop: 64,
   },
+});
+
+const Rate = styled.span({
+  marginLeft: 'auto',
+  marginTop: 8,
+});
+
+const ContainerRate = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
 });
 
 const getOptions = (data: Currencies) => {
@@ -79,27 +89,33 @@ export const App = (): JSX.Element => {
 
   return (
     <Container>
-      <Header>Currency converter</Header>
+      <Heading>Currency converter</Heading>
 
-      <Wrapper>
-        <CurrencyInput
-          value={fromValue === 0 ? '' : fromValue}
-          options={options}
-          onInputChange={changeFromValue}
-          onCurrencyChange={(event) => setFromCurrency(event?.value ?? '')}
-        />
+      <ContainerRate>
+        <Wrapper>
+          <CurrencyInput
+            value={fromValue === 0 ? '' : fromValue}
+            options={options}
+            onInputChange={changeFromValue}
+            onCurrencyChange={(event) => setFromCurrency(event?.value ?? '')}
+          />
 
-        <SVGContainer>
-          <RiExchangeFill size={36} color={colors.violet.violet9} />
-        </SVGContainer>
+          <SVGContainer>
+            <RiExchangeFill size={36} color={colors.violet.violet9} />
+          </SVGContainer>
 
-        <CurrencyInput
-          value={toValue === 0 ? '' : toValue}
-          options={options}
-          onInputChange={changeToValue}
-          onCurrencyChange={(event) => setToCurrency(event?.value ?? '')}
-        />
-      </Wrapper>
+          <CurrencyInput
+            value={toValue === 0 ? '' : toValue}
+            options={options}
+            onInputChange={changeToValue}
+            onCurrencyChange={(event) => setToCurrency(event?.value ?? '')}
+          />
+        </Wrapper>
+
+        {fromCurrency && toCurrency && (
+          <Rate>1 {fromCurrency.toUpperCase()} = {1 * currencyRate} {toCurrency.toUpperCase()}</Rate>
+        )}
+      </ContainerRate>
     </Container>
   );
 };
